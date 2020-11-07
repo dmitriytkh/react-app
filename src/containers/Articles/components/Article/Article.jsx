@@ -1,29 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./index.scss";
 import { push } from "connected-react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getArticle } from "../../store/selectors";
+import { withRouter } from "react-router";
+import { actions } from "../../../../store/actions";
 import { ROUTES_PATH } from "../../../../router/constants";
 
-const Article = ({ article: { title, description, image, index } }) => {
+const Article = ({
+  match: {
+    params: { id },
+  },
+}) => {
   const dispatch = useDispatch();
+  const [article, setArticle] = useState(null);
 
-  return (
+  useEffect(() => {
+    dispatch(actions.FETCH_ARTICLE.REQUEST(id));
+  }, [dispatch]);
+
+  const selectedArticle = useSelector(getArticle(id));
+
+  useEffect(() => {
+    setArticle(selectedArticle);
+  }, [selectedArticle]);
+
+  const handleChangeArticle = () => {
+    dispatch(actions.EDIT_ARTICLE.REQUEST(article));
+    dispatch(push(ROUTES_PATH.ARTICLES));
+  };
+
+  const handleRemoveArticle = () => {
+    dispatch(actions.REMOVE_ARTICLE.REQUEST(article.id));
+    dispatch(push(ROUTES_PATH.ARTICLES));
+  };
+
+  return article ? (
     <div className="article">
-      <img src={image} alt={title} />
-      <h2>{title}</h2>
-      <p>{description}</p>
+      <img src={article.image} alt={article.title} />
+      <h2>{article.title}</h2>
+      <p>{article.description}</p>
       <div>
-        <button
-          type="button"
-          onClick={() => dispatch(push(`${ROUTES_PATH.ARTICLES}/${index}`))}
-        >
-          View
+        <button onClick={handleChangeArticle} type="button">
+          Save changes
         </button>
-        <button type="button">Edit</button>
-        <button type="button">Remove</button>
+        <button onClick={handleRemoveArticle} type="button">
+          Remove
+        </button>
       </div>
     </div>
-  );
+  ) : null;
 };
 
-export default Article;
+export default withRouter(Article);

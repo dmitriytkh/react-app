@@ -18,12 +18,7 @@ const routeAssessor = (parentRoutePath, route) => {
   } else {
     return (
       <Switch key={`parent-${path}`}>
-        <Route
-          key={path}
-          path={path}
-          exact={exact}
-          component={component}
-        />
+        <Route key={path} path={path} exact={exact} component={component} />
         {children.map((childRoute) => routeAssessor(path, childRoute))}
       </Switch>
     );
