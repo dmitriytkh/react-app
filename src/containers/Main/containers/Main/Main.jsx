@@ -4,13 +4,14 @@ import classname from "classname";
 import { Header } from "../../../Header/containers/Header";
 import { SideBar } from "../../../SideBar/containers/SideBar";
 import { useDispatch } from "react-redux";
-import * as actions from "../../../Articles/store/actions";
+// import * as actions from "../../../Articles/store/actions";
+import { actions } from "../../../../store/actions";
 
 export default ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.A_FetchArticlesRequest());
+    dispatch(actions.FETCH_ARTICLES.REQUEST());
   }, [dispatch]); //Why? when we load user page, get articles
 
   return (

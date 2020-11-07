@@ -1,8 +1,8 @@
 import { call, put, takeLatest, select } from "redux-saga/effects";
-
-import * as constants from "./constants";
-import * as actions from "./actions";
+import { actions } from "../../../store/actions";
+import { constants } from "../../../store/constants";
 import * as selectors from "./selectors";
+import { sagaAssessor } from "../../../utils";
 
 function* fetchAllArticles(callback) {
   try {
@@ -39,9 +39,9 @@ function* fetchAllArticles(callback) {
         image: "https://picsum.photos/id/237/200/300",
       },
     ];
-    yield put(actions.A_FetchArticlesSuuccsess(data));
+    yield put(actions.FETCH_ARTICLES.SUCCESS(data));
   } catch (err) {
-    yield put(actions.A_FetchArticlesFailure(err));
+    yield put(actions.FETCH_ARTICLES.FAILURE(err));
   } finally {
     callback && typeof callback === "function" && callback(); //Why? in video single &
   }
@@ -53,9 +53,9 @@ function* fetchArticleById({ payload, callback }) {
      * Request to DB
      */
     const article = yield select(selectors.getArticle(payload));
-    yield put(actions.A_FetchArticleSuuccsess(article));
+    yield put(actions.FETCH_ARTICLE.SUCCESS(article));
   } catch (err) {
-    yield put(actions.A_FetchArticleFailure(err));
+    yield put(actions.FETCH_ARTICLE.FAILURE(err));
   } finally {
     callback && typeof callback === "function" && callback();
   }
@@ -66,10 +66,10 @@ function* editArticle({ payload, callback }) {
     /**
      * Request to DB
      */
-    yield put(actions.A_EditArticleSuuccsess(payload));
-    yield put(actions.A_EditArticleClear());
+    yield put(actions.EDIT_ARTICLE.SUCCESS(payload));
+    yield put(actions.EDIT_ARTICLE.CLEAR());
   } catch (err) {
-    yield put(actions.A_EditArticleFailure(err));
+    yield put(actions.EDIT_ARTICLE.FAILURE(err));
   } finally {
     callback && typeof callback === "function" && callback();
   }
@@ -80,31 +80,41 @@ function* removeArticleById({ payload, callback }) {
     /**
      * Request to DB
      */
-    yield put(actions.A_RemoveArticleSuuccsess(payload));
+    yield put(actions.REMOVE_ARTICLE.SUCCESS(payload));
   } catch (err) {
-    yield put(actions.A_RemoveArticleFailure(err));
+    yield put(actions.REMOVE_ARTICLE.FAILURE(err));
   } finally {
     callback && typeof callback === "function" && callback();
   }
 }
 
-function* AddArticle({ payload, callback }) {
-  try {
-    /**
-     * Request to DB
-     */
-    yield put(actions.A_AddArticleSuuccsess(payload));
-  } catch (err) {
-    yield put(actions.A_AddArticleFailure(err));
-  } finally {
-    callback && typeof callback === "function" && callback();
-  }
-}
+// function* AddArticle({ payload, callback }) {
+//   try {
+//     /**
+//      * Request to DB
+//      */
+//     yield put(actions.ADD_ARTICLE.SUCCESS(payload));
+//   } catch (err) {
+//     yield put(actions.ADD_ARTICLE.FAILURE(err));
+//   } finally {
+//     callback && typeof callback === "function" && callback();
+//   }
+// }
+
+const AddArticle = ({ payload, callback }) =>
+  sagaAssessor(
+    () =>
+      function* () {
+        yield put(actions.ADD_ARTICLE.SUCCESS(payload));
+      },
+    actions.ADD_ARTICLE.FAILURE,
+    callback
+  );
 
 export default function* articlesWatcher() {
-  yield takeLatest(constants.FETCH_ARTICLES_REQUEST, fetchAllArticles);
-  yield takeLatest(constants.FETCH_ARTICLE_REQUEST, fetchArticleById); //Why?
-  yield takeLatest(constants.EDIT_ARTICLE_REQUEST, editArticle); //Why?
-  yield takeLatest(constants.REMOVE_ARTICLE_REQUEST, removeArticleById); //Why?
-  yield takeLatest(constants.ADD_ARTICLE_REQUEST, AddArticle); //Why?
+  yield takeLatest(constants.FETCH_ARTICLES.REQUEST, fetchAllArticles);
+  yield takeLatest(constants.FETCH_ARTICLE.REQUEST, fetchArticleById); //Why?
+  yield takeLatest(constants.EDIT_ARTICLE.REQUEST, editArticle); //Why?
+  yield takeLatest(constants.REMOVE_ARTICLE.REQUEST, removeArticleById); //Why?
+  yield takeLatest(constants.ADD_ARTICLE.REQUEST, AddArticle); //Why?
 }
