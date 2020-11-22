@@ -2,6 +2,18 @@ import { ROUTES_PATH, ROUTES_LABEL } from "./constants";
 import React from "react";
 import { Articles } from "../containers/Articles/containers";
 import { Article } from "../containers/Articles/components";
+import {
+  SignIn,
+  SignUp,
+  ResetPassword,
+  ForgotPassword,
+  AccountActivation,
+  AccountLinkSend,
+  ForgotPassLinkSend,
+} from "../containers/Auth/components";
+
+import FolderSpecialIcon from "@material-ui/icons/FolderSpecial";
+import SettingsApplicationsIcon from "@material-ui/icons/SettingsApplications";
 
 export const privateRouter = (userRole) =>
   [
@@ -22,7 +34,7 @@ export const privateRouter = (userRole) =>
         },
       ],
       label: ROUTES_LABEL.ARTICLES,
-      icon: null,
+      icon: <FolderSpecialIcon />,
     },
     {
       path: ROUTES_PATH.USER,
@@ -31,7 +43,7 @@ export const privateRouter = (userRole) =>
       accessLevel: [],
       children: [],
       label: ROUTES_LABEL.USER,
-      icon: null,
+      icon: <SettingsApplicationsIcon />,
     },
   ].filter((route) => (userRole ? route.accessLevel.includes(userRole) : true));
 
@@ -39,31 +51,43 @@ export const publicRouter = [
   {
     path: ROUTES_PATH.SIGN_IN,
     exact: true,
-    component: () => <div>Login</div>,
+    component: SignIn,
     children: [],
   },
   {
     path: ROUTES_PATH.SIGN_UP,
     exact: true,
-    component: () => <div>Registration</div>,
+    component: SignUp,
     children: [],
   },
   {
-    path: ROUTES_PATH.RESET,
+    path: `${ROUTES_PATH.RESET}/:token`,
     exact: true,
-    component: () => <div>Reaet pussword</div>,
+    component: ResetPassword,
     children: [],
   },
   {
     path: ROUTES_PATH.FORGOT,
     exact: true,
-    component: () => <div>Forgot password</div>,
+    component: ForgotPassword,
     children: [],
   },
   {
-    path: ROUTES_PATH.ACTIVATION,
+    path: `${ROUTES_PATH.ACTIVATION}/:token`,
     exact: true,
-    component: () => <div>Activation</div>,
+    component: AccountActivation,
+    children: [],
+  },
+  {
+    path: ROUTES_PATH.ACCOUNT_LINK_SEND,
+    exact: true,
+    component: AccountLinkSend,
+    children: [],
+  },
+  {
+    path: ROUTES_PATH.FORGOT_PASS_LINK_SEND,
+    exact: true,
+    component: ForgotPassLinkSend,
     children: [],
   },
 ];

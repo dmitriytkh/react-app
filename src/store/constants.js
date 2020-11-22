@@ -16,5 +16,7 @@ const USERS = [
   // 'ADD_USER'
 ];
 
+const AUTH = [];
+
 export const compose = [...ARTICLES, ...USERS];
 export const constants = actionConstantsCreator(compose);

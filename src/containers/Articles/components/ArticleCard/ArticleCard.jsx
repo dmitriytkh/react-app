@@ -1,11 +1,20 @@
 import React from "react";
-import "./index.scss";
+import useStyles from "./styles";
 import { push } from "connected-react-router";
 import { useDispatch } from "react-redux";
 import { ROUTES_PATH } from "../../../../router/constants";
 import { actions } from "../../../../store/actions";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  CardActions,
+  Button,
+} from "@material-ui/core";
 
-const ArticleCard = ({ title, description, image, id }) => {
+const ArticleCard = ({ title, description, image_url, id }) => {
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleRemoveArticle = () => {
@@ -13,28 +22,38 @@ const ArticleCard = ({ title, description, image, id }) => {
   };
 
   return (
-    <div className="article-card">
-      <img src={image} alt={title} />
-      <h2>{title}</h2>
-      <p>{description}</p>
-      <div>
-        <button
-          type="button"
+    <Card className={classes.card}>
+      <CardMedia
+        className={classes.cardMedia}
+        image={image_url}
+        title={title}
+      />
+      <CardContent className={classes.cardContent}>
+        <Typography gutterBottom variant="h5" component="h2">
+          {title}
+        </Typography>
+        <Typography>{description}</Typography>
+      </CardContent>
+      <CardActions>
+        <Button
+          size="small"
+          color="primary"
           onClick={() => dispatch(push(`${ROUTES_PATH.ARTICLES}/${id}`))}
         >
           View
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
           onClick={() => dispatch(push(`${ROUTES_PATH.ARTICLES}/${id}`))}
+          size="small"
+          color="primary"
         >
           Edit
-        </button>
-        <button onClick={handleRemoveArticle} type="button">
+        </Button>
+        <Button size="small" color="secondary" onClick={handleRemoveArticle}>
           Remove
-        </button>
-      </div>
-    </div>
+        </Button>
+      </CardActions>
+    </Card>
   );
 };
 
