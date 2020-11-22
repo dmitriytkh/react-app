@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
 import { Header } from "../../../Header/containers/Header";
 import { SideBar } from "../../../SideBar/containers/SideBar";
-import { useDispatch } from "react-redux";
-import { actions } from "../../../../store/actions";
+import { useDispatch, connect } from "react-redux";
 import { CssBaseline, Grid } from "@material-ui/core";
+import { A_FetchAllArticlesRequest } from "../../../../store/actions";
+import { bindActionCreators } from "redux";
 
-export default ({ children }) => {
+const MainComponent = ({
+  children,
+  actions: { A_FetchAllArticlesRequest },
+}) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    dispatch(actions.FETCH_ARTICLES.REQUEST());
+    // dispatch(actions.FETCH_ARTICLES.REQUEST());
+    A_FetchAllArticlesRequest();
   }, [dispatch]); //Why? when we load user page, get articles
 
   return (
@@ -29,3 +34,16 @@ export default ({ children }) => {
     </div>
   );
 };
+
+const mapdispatchtoProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(
+      {
+        A_FetchAllArticlesRequest,
+      },
+      dispatch
+    ),
+  };
+};
+
+export default connect(null, mapdispatchtoProps)(MainComponent);
